@@ -1,3 +1,5 @@
+const User = require('../users/users-model')
+
 /*
   If the user does not have a session saved in the server
 
@@ -47,3 +49,10 @@ function checkPasswordLength() {
 }
 
 // Don't forget to add these to the `exports` object so they can be required in other modules
+
+module.exports = {
+  restricted,
+  checkUsernameFree,
+  checkUsernameExists,
+  checkPasswordLength
+}
