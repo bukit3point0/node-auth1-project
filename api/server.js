@@ -19,7 +19,7 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   store: new KnexSessionStore({
-    knex: require('../database/db-config.js'),
+    knex: require('../data/db-config.js'),
     tablename: 'sessions',
     sidfieldname: 'sid',
     createtable: true,
@@ -48,7 +48,7 @@ server.use(express.json());
 server.use(cors());
 
 server.use('/api/users', UsersRouter)
-server.use('/api/auth', AuthRouter)
+// server.use('/api/auth', AuthRouter)
 
 server.get("/", (req, res) => {
   res.json({ api: "up" });
