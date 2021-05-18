@@ -9,13 +9,21 @@ function find() {
 function findBy(filter) {
   return db('users')
   .where(filter)
+  //.select('user_id', 'username')
+  .orderBy('user_id')
+}
+
+function findIdAndUser(filter) {
+  return db('users')
+  .where(filter)
+  .select('user_id', 'username')
   .orderBy('user_id')
 }
 
 function findById(user_id) {
   return db('users')
   .where ({user_id})
-  .select('username', 'password')
+  .select('user_id', 'username')
   .first()
 }
 
@@ -27,6 +35,7 @@ async function add(user) {
 module.exports = {
   find,
   findBy,
+  findIdAndUser,
   findById,
   add
 }

@@ -7,9 +7,15 @@ router.get('/', restricted, (req, res, next) => {
   .then(users => {
     res.status(200).json(users)
   })
-  .catch(err => {
-    next(err)
-  })
+  .catch(next)
 })
+
+router.use((err, req, res, next) => { // eslint-disable-line
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+    customMessage: 'Something went wrong inside the users router'
+  });
+});
 
 module.exports = router

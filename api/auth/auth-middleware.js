@@ -1,43 +1,37 @@
 const User = require('../users/users-model')
+const bcrypt = require('bcryptjs')
 
 function restricted(req, res, next) {
-  const {username, password} = req.body
-  User.findBy({username})
-  .then(([user]) => {
-      if (user && bcrpyt.compareSync(password, user.password)) {
-          console.log(req.session)
-          req.session.user = user
-          res.json({
-              message: `${user.username} found!`
-          })
-      } else {
-      next({
-          status: 401, 
-          message: `You shall not pass!`
-      })
-      }
-  })
+  if (req.session.user) {
+    next()
+  } else {
+    next({
+      status: 401,
+      message: `you shall not pass`
+    })
+  }
 }
 
 function checkUsernameFree(req, res, next) {
-  const {username} = req.body.username
-  User.findBy(username)
-  .then(user => {
-    if(!user) {
-      next()
-    } else {
+  const username = req.body.username
+  User.findBy({username})
+  .then(([user]) => {
+    if(user) {
       res.status(422).json({
-        message: 'Username taken'
+        message: 'Username taken',
       })
+    } else {
+      next()
     }
   })
 }
 
 function checkUsernameExists(req, res, next) {
-  const {username} = req.body.username
-  User.findBy(username)
-  .then(user => {
-    if(user) {
+  const {username, password} = req.body
+  
+  User.findBy({username})
+  .then(([user]) => {
+    if (user && bcrypt.compareSync(password, user.password)) {
       next()
     } else {
       res.status(401).json({
@@ -48,7 +42,7 @@ function checkUsernameExists(req, res, next) {
 }
 
 function checkPasswordLength(req, res, next) {
-  const {password} = req.body.password
+  const password = req.body.password
   if (!password || password < 3) {
     res.status(422).json({
       message: `Password must be longer than 3 chars`
@@ -58,9 +52,24 @@ function checkPasswordLength(req, res, next) {
   }
 }
 
+// function confirmPassword(req, res, next) {
+//   const {username, password} = req.body.password
+//   User.findBy({username})
+//   .then(([user]) => {
+//     if(user && bcrypt.compareSync(password, user.password)) {
+//       next()
+//     } else {
+//       res.status(401).json({
+//         message: `Incorrect username or password.`
+//       })
+//     }
+//   })
+// }
+
 module.exports = {
   restricted,
   checkUsernameFree,
   checkUsernameExists,
-  checkPasswordLength
+  checkPasswordLength,
+  // confirmPassword
 }
